@@ -22,48 +22,48 @@ for the JSON-RPC server.
 
 
 ```
-$ make start
+bitcoind -datadir=1 -daemon
+bitcoind -datadir=2 -daemon
 ```
 
 ## Check the status of the nodes
 
 ```
-$ make getinfo
-bitcoin-cli -datadir=1  getinfo
+$ bitcoin-cli -datadir=1 getinfo
 {
-    "version" : 90300,
-    "protocolversion" : 70002,
-    "walletversion" : 60000,
-    "balance" : 0.00000000,
-    "blocks" : 0,
-    "timeoffset" : 0,
-    "connections" : 1,
-    "proxy" : "",
-    "difficulty" : 0.00000000,
-    "testnet" : false,
-    "keypoololdest" : 1413617762,
-    "keypoolsize" : 101,
-    "paytxfee" : 0.00000000,
-    "relayfee" : 0.00001000,
-    "errors" : ""
+  "version": 130200,
+  "protocolversion": 70015,
+  "walletversion": 130000,
+  "balance": 0.00000000,
+  "blocks": 0,
+  "timeoffset": 0,
+  "connections": 1,
+  "proxy": "",
+  "difficulty": 4.656542373906925e-10,
+  "testnet": false,
+  "keypoololdest": 1496178575,
+  "keypoolsize": 100,
+  "paytxfee": 0.00000000,
+  "relayfee": 0.00001000,
+  "errors": ""
 }
-bitcoin-cli -datadir=2  getinfo
+$ bitcoin-cli -datadir=2  getinfo
 {
-    "version" : 90300,
-    "protocolversion" : 70002,
-    "walletversion" : 60000,
-    "balance" : 0.00000000,
-    "blocks" : 0,
-    "timeoffset" : 0,
-    "connections" : 1,
-    "proxy" : "",
-    "difficulty" : 0.00000000,
-    "testnet" : false,
-    "keypoololdest" : 1413617762,
-    "keypoolsize" : 101,
-    "paytxfee" : 0.00000000,
-    "relayfee" : 0.00001000,
-    "errors" : ""
+  "version": 130200,
+  "protocolversion": 70015,
+  "walletversion": 130000,
+  "balance": 0.00000000,
+  "blocks": 0,
+  "timeoffset": 0,
+  "connections": 1,
+  "proxy": "",
+  "difficulty": 4.656542373906925e-10,
+  "testnet": false,
+  "keypoololdest": 1496178581,
+  "keypoolsize": 100,
+  "paytxfee": 0.00000000,
+  "relayfee": 0.00001000,
+  "errors": ""
 }
 ```
 
@@ -77,59 +77,52 @@ instantly using a simple command.
 To generate a block:
 
 ```
-$ make generate
+bitcoin-cli -datadir=1 generate 1
 ```
 
-To generate more than 1 block:
-
-```
-$ make generate BLOCKS=10
-```
 
 ## Need to generate at least 100 blocks before there will be a balance in the first wallet
 ```
-$ make generate BLOCKS=200
+bitcoin-cli -datadir=1 generate 200
 ```
 
 ## Verify that there is a balance on the first wallet
 ```
-$ make getinfo
+bitcoin-cli -datadir=1 getinfo
 ```
 
 ## Generate a wallet address for the second wallet
 ```
-$ make address2
+bitcoin-cli -datadir=2 getnewaddress
 ```
 
 ## Sending bitcoins
 To send bitcoins that you've generated to the second wallet: (be sure to change the ADDRESS value below to wallet address generated in the prior command)
 
 ```
-$ make sendfrom1 ADDRESS=mxwPtt399zVrR62ebkTWL4zbnV1ASdZBQr AMOUNT=10
+bitcoin-cli -datadir=1 sendtoaddress "mzXCmhrMGqN8gJSrpQ4wXmA9fJ1DSzpYAz" 10
 ```
 
 ## Does the balance show up?
 Run the getinfo command again. Does the balance show up? Why not?
 ```
-$ make getinfo
+bitcoin-cli -datadir=1 getinfo
 ```
 
-## Generate another block
-```
-$ make generate
-```
 
 ## Stopping the testnet-box
 
 ```
-$ make stop
+bitcoin-cli -datadir=1 stop
+bitcoin-cli -datadir=2 stop
 ```
 
 To clean up any files created while running the testnet and restore to the
 original state:
 
 ```
-$ make clean
+find 1/regtest/* -not -name 'server.*' -delete
+find 2/regtest/* -not -name 'server.*' -delete
 ```
 
 ## Using with docker
