@@ -3,13 +3,12 @@
 
 Creating your own private bitcoin testnet.
 
-You must have `bitcoind` and `bitcoin-cli` installed on your system and in the
-path unless running this within a [Docker](https://www.docker.com) container as shown below:
+The commands following can be ran within a [Docker](https://www.docker.com) container that is started using the following:
 ```
 docker run -it -p 19001:19001 -p 19011:19011 freewil/bitcoin-testnet-box
 ```
 
-## Starting the testnet-box
+## Starting the nodes
 
 This will start up two nodes using the two datadirs `1` and `2`. They
 will only connect to each other in order to remain an isolated private testnet.
@@ -21,7 +20,6 @@ Node `1` will listen on port `19000`, allowing node `2` to connect to it.
 
 Node `1` will listen on port `19001` and node `2` will listen on port `19011`
 for the JSON-RPC server.
-
 
 ```
 bitcoind -datadir=1 -daemon
