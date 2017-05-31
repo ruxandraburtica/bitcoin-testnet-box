@@ -1,13 +1,11 @@
-# Bitcoin testnet box
+# bitcoin-testnet-box
 [![docker pulls](https://img.shields.io/docker/pulls/freewil/bitcoin-testnet-box.svg?style=flat)](https://hub.docker.com/r/freewil/bitcoin-testnet-box/)
 
-Creating your own private bitcoin testnet.
+Create your own private bitcoin testnet
 
 You must have `bitcoind` and `bitcoin-cli` installed on your system and in the
-path unless running this within a [Docker](https://www.docker.com) container as shown below:
-```
-docker run -it -p 19001:19001 -p 19011:19011 freewil/bitcoin-testnet-box
-```
+path unless running this within a [Docker](https://www.docker.com) container
+(see [below](#using-with-docker)).
 
 ## Starting the testnet-box
 
@@ -28,7 +26,7 @@ bitcoind -datadir=1 -daemon
 bitcoind -datadir=2 -daemon
 ```
 
-### Check the status of the nodes
+## Check the status of the nodes
 
 ```
 $ bitcoin-cli -datadir=1 getinfo
@@ -69,7 +67,7 @@ $ bitcoin-cli -datadir=2  getinfo
 }
 ```
 
-### Generating blocks
+## Generating blocks
 
 Normally on the live, real, bitcoin network, blocks are generated, on average,
 every 10 minutes. Since this testnet-in-box uses Bitcoin Core's (bitcoind)
@@ -83,50 +81,71 @@ bitcoin-cli -datadir=1 generate 1
 ```
 
 
-### Need to generate at least 100 blocks before there will be a balance in the first wallet
+## Need to generate at least 100 blocks before there will be a balance in the first wallet
 ```
 bitcoin-cli -datadir=1 generate 200
 ```
 
-### Verify that there is a balance on the first wallet
+## Verify that there is a balance on the first wallet
 ```
 bitcoin-cli -datadir=1 getinfo
 ```
 
-### Generate a wallet address for the second wallet
+## Generate a wallet address for the second wallet
 ```
 bitcoin-cli -datadir=2 getnewaddress
 ```
 
-### Sending bitcoins
+## Sending bitcoins
 To send bitcoins that you've generated to the second wallet: (be sure to change the ADDRESS value below to wallet address generated in the prior command)
 
 ```
 bitcoin-cli -datadir=1 sendtoaddress "mzXCmhrMGqN8gJSrpQ4wXmA9fJ1DSzpYAz" 10
 ```
 
-### Does the balance show up?
+## Does the balance show up?
 Run the getinfo command again. Does the balance show up? Why not?
 ```
-bitcoin-cli -datadir=2 getinfo
-```
-
-How about running the `getwalletinfo` command?
-```
-bitcoin-cli -datadir=2 getwalletinfo
-```
-
-### Showing information about your wallets
-```
-bitcoin-cli -datadir=2 listreceivedbyaddress 0 true
-```
-
-#### More
-For more details, you could run the help command on the `bitcoin-cli`:
-```
-bitcoin-cli -datadir=2 help
+bitcoin-cli -datadir=1 getinfo
 ```
 
 
 ## Stopping the testnet-box
-Just exit the docker container and remove it afterwards.
+
+```
+bitcoin-cli -datadir=1 stop
+bitcoin-cli -datadir=2 stop
+```
+
+To clean up any files created while running the testnet and restore to the
+original state:
+
+```
+find 1/regtest/* -not -name 'server.*' -delete
+find 2/regtest/* -not -name 'server.*' -delete
+```
+
+## Using with docker
+This testnet-box can be used with [Docker](https://www.docker.com/) to run it in
+an isolated container.
+
+### Building docker image
+
+Pull the image
+  * `docker pull freewil/bitcoin-testnet-box`
+
+or build it yourself from this directory
+  * `docker build -t bitcoin-testnet-box .`
+
+### Running docker container
+The docker image will run two bitcoin nodes in the background and is meant to be
+attached to allow you to type in commands. The image also exposes
+the two JSON-RPC ports from the nodes if you want to be able to access them
+from outside the container.
+      
+   `$ docker run -t -i -p 19001:19001 -p 19011:19011 freewil/bitcoin-testnet-box`
+
+or if you built the docker image yourself:
+
+   `$ docker run -t -i -p 19001:19001 -p 19011:19011 bitcoin-testnet-box`
+
